@@ -17,3 +17,6 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+multiagent-envs-ML/*.egg-info/
+multiagent-envs-ML/multiagent/__pycache__/
