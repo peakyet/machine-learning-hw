@@ -20,3 +20,5 @@ tags
 
 multiagent-envs-ML/*.egg-info/
 multiagent-envs-ML/multiagent/__pycache__/
+multiagent-envs-ML/agents/__pycache__/
+multiagent-envs-ML/multiagent/scenarios/__pycache__/
