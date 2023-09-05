@@ -19,7 +19,6 @@ _exp_name = "sample"
 
 # Import necessary packages.
 import numpy as np
-import pandas as pd
 import torch
 import os
 import torch.nn as nn
@@ -285,29 +284,43 @@ def Training_Demo():
 
 def Testing_Demo():
     valid_set = FoodDataset(os.path.join(_dataset_dir,"validation"), tfm=test_tfm)
-    valid_loader = DataLoader(valid_set, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
+    valid_loader = DataLoader(valid_set, batch_size=batch_size, shuffle=False, num_workers=0, pin_memory=True)
     model_test = Classifier().to(device)
     model_test.load_state_dict(torch.load(f"{_exp_name}_best.ckpt"))
     model_test.eval()
     valid_loss = []
     valid_accs = []
+    ids = []
+    predictions = []
 
-    # Iterate the validation set by batches.
-    for batch in tqdm(valid_loader):
+    path = os.path.join(_dataset_dir,"validation")
+    files = sorted([os.path.join(path,x) for x in os.listdir(path) if x.endswith(".jpg")])
+    for fname in files:
+        ids.append( fname.split("\\")[-1].split(".")[0])
 
-        imgs, labels = batch
-        with torch.no_grad():
-            logits = model_test(imgs.to(device))
-        # Compute the accuracy for current batch.
-        acc = (logits.argmax(dim=-1) == labels.to(device)).float().mean()
-        valid_accs.append(acc)
+    with torch.no_grad():
+        for data, labels in tqdm(valid_loader):
+            test_pred = model_test(data.to(device))
+            test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
+            predictions += test_label.squeeze().tolist()
+            acc = (test_pred.argmax(dim=-1) == labels.to(device)).float().mean()
+            valid_accs.append(acc)
 
     valid_acc = sum(valid_accs) / len(valid_accs)
-
     print(f"acc = {valid_acc:.5f}")
+
+    with open(os.getcwd() + "\\result.txt", "w") as f:
+        f.write(f"ID Category Accuracy: {valid_acc}\n")
+        for i in range(len(ids)):
+            f.write(ids[i])
+            f.write(" ")
+            f.write(str(predictions[i]))
+            f.write("\n")
+        
 
 def Predict_demo():
     """# Testing and generate prediction CSV"""
+    import pandas as pd
     test_set = FoodDataset(os.path.join(_dataset_dir,"test"), tfm=test_tfm)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=0, pin_memory=True)
     model_best = Classifier().to(device)
@@ -329,5 +342,5 @@ def Predict_demo():
     df.to_csv("submission.csv",index = False)
 
 if __name__ == "__main__":
-    Training_Demo()
-    # Testing_Demo()
+    # Training_Demo()
+    Testing_Demo()
