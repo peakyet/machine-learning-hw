@@ -16,6 +16,7 @@ Notes: if the links are dead, you can download the data directly from Kaggle and
 #! unzip food11.zip
 
 _exp_name = "sample"
+OS = "Linux"
 
 # Import necessary packages.
 import numpy as np
@@ -87,10 +88,12 @@ class FoodDataset(Dataset):
         im = self.transform(im)
         #im = self.data[idx]
         try:
-            label = int(fname.split("\\")[-1].split("_")[0])
+            if OS == "Windows":
+                label = int(fname.split("\\")[-1].split("_")[0])
+            else:
+                label = int(fname.split("/")[-1].split("_")[0])
             # print("\n", label)
         except:
-            # print("no lable!!!!")
             label = -1 # test has no label
         return im,label
 
@@ -296,7 +299,10 @@ def Testing_Demo():
     path = os.path.join(_dataset_dir,"validation")
     files = sorted([os.path.join(path,x) for x in os.listdir(path) if x.endswith(".jpg")])
     for fname in files:
-        ids.append( fname.split("\\")[-1].split(".")[0])
+        if OS == "Windows":
+            ids.append( fname.split("\\")[-1].split(".")[0])
+        else:
+            ids.append( fname.split("/")[-1].split(".")[0])
 
     with torch.no_grad():
         for data, labels in tqdm(valid_loader):
@@ -309,13 +315,22 @@ def Testing_Demo():
     valid_acc = sum(valid_accs) / len(valid_accs)
     print(f"acc = {valid_acc:.5f}")
 
-    with open(os.getcwd() + "\\result.txt", "w") as f:
-        f.write(f"ID Category Accuracy: {valid_acc}\n")
-        for i in range(len(ids)):
-            f.write(ids[i])
-            f.write(" ")
-            f.write(str(predictions[i]))
-            f.write("\n")
+    if OS == "Windows":
+        with open(os.getcwd() + "\\result.txt", "w") as f:
+            f.write(f"ID Category Accuracy: {valid_acc}\n")
+            for i in range(len(ids)):
+                f.write(ids[i])
+                f.write(" ")
+                f.write(str(predictions[i]))
+                f.write("\n")
+    else:
+        with open("result.txt", "w") as f:
+            f.write(f"ID Category Accuracy: {valid_acc}\n")
+            for i in range(len(ids)):
+                f.write(ids[i])
+                f.write(" ")
+                f.write(str(predictions[i]))
+                f.write("\n")
         
 
 def Predict_demo():

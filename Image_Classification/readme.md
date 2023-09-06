@@ -5,6 +5,8 @@
 - [x] Pytorch
 - [x] food11数据
 
+> 尽量在Ubuntu下运行
+
 > 程序在Windows下运行, 也可以在Ubuntu下，注意修改代码中的路径分隔符。
 
 ## 代码
