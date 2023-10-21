@@ -64,7 +64,7 @@ class Scenario(BaseScenario):
         self.reset_world(world)
         return world
 
-    def reset_world(self, world, agent_pos=None):
+    def reset_world(self, world, agent_pos=None, check_pos=None):
         # random properties for agents
         for i, agent in enumerate(world.agents):  # agent颜色
             agent.color = np.array(
@@ -94,7 +94,10 @@ class Scenario(BaseScenario):
                 landmark.state.p_pos = pos[i]  # landmark初始位置
                 landmark.state.p_vel = np.zeros(world.dim_p)
         # world.check[0].state.p_pos = [np.random.uniform(-0.6,0.6),np.random.uniform(-0.6,0.6)]
-        world.check[0].state.p_pos = [-0.5, -0.5]
+        if check_pos is None:
+            world.check[0].state.p_pos = [-0.5, -0.5]
+        else:
+            world.check[0].state.p_pos = check_pos
         world.check[0].state.p_vel = np.zeros(world.dim_p)
         # # 增加部分 [x,y]=[0,0]是在视野中心
         # # 每条边20个border， 计算好大概位置，依次为每条边的border生成位置坐标
