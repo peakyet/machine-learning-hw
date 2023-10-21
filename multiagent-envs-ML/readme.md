@@ -11,7 +11,7 @@
 依赖:
 
 - gymnasium 
-- pyglet
+- pyglet = 1.5.24
 
 > 运行 `demo.py` 检查环境，缺什么包下载什么包.
 
