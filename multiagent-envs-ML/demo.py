@@ -11,8 +11,9 @@ if __name__ == '__main__':
     world = scenario.make_world()
     env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation, info_callback=None, done_callback=scenario.is_done, shared_viewer = True)
 
-    env.reset(np.array([[0.0, 0.0], [0.7, 0.7]]), [-0.5, -0.5])
     # env.reset()
+    obs_pos = [[-0.35, 0.35], [0.35, 0.35], [0, -0.35]] # test point
+    env.reset(np.array([[0.0, 0.0], [0.7, 0.7]]), [-0.5, -0.5], obs_pos)
     image = env.render("rgb_array")  # 使用这种方法读取图片
     step = 0
     total_step = 0

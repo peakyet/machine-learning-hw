@@ -64,7 +64,7 @@ class Scenario(BaseScenario):
         self.reset_world(world)
         return world
 
-    def reset_world(self, world, agent_pos=None, check_pos=None):
+    def reset_world(self, world, agent_pos=None, check_pos=None, obstacles=None):
         # random properties for agents
         for i, agent in enumerate(world.agents):  # agent颜色
             agent.color = np.array(
@@ -88,7 +88,10 @@ class Scenario(BaseScenario):
                 agent.state.p_pos = agent_pos[0] if agent.adversary else agent_pos[1] 
             agent.state.p_vel = np.zeros(world.dim_p)  # agent初始速度
             agent.state.c = np.zeros(world.dim_c)  # agent初始交流状态
-        pos = [[-0.35, 0.35], [0.35, 0.35], [0, -0.35]]
+        if obstacles is None:
+            pos = [[-0.35, 0.35], [0.35, 0.35], [0, -0.35]] # test point
+        else:
+            pos = obstacles
         for i, landmark in enumerate(world.landmarks):
             if not landmark.boundary:
                 landmark.state.p_pos = pos[i]  # landmark初始位置
